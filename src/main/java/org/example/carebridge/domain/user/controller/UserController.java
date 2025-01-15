@@ -8,6 +8,7 @@ import org.example.carebridge.domain.user.dto.login.UserLoginResponseDto;
 import org.example.carebridge.domain.user.dto.signup.UserDoctorSignupRequestDto;
 import org.example.carebridge.domain.user.dto.signup.UserPatientSignupRequestDto;
 import org.example.carebridge.domain.user.dto.signup.UserSignupResponseDto;
+import org.example.carebridge.domain.user.dto.update.UserDeleteRequestDto;
 import org.example.carebridge.domain.user.dto.update.UserUpdateRequestDto;
 import org.example.carebridge.domain.user.dto.update.UserUpdateResponseDto;
 import org.example.carebridge.domain.user.entity.User;
@@ -89,6 +90,13 @@ public class UserController {
     }
 
     //회원 탈퇴
+    @DeleteMapping
+    public void deleteUser(@RequestBody UserDeleteRequestDto userDeleteRequestDto,
+                           @AuthenticationPrincipal UserDetailsImple userDetails) {
+        User user = userDetails.getUser();
+        String password = userDeleteRequestDto.getPassword();
+        userService.deleteUser(user, password);
+    }
 
     //사용자 정보 수정
     @PatchMapping("/update-profile")

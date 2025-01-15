@@ -23,6 +23,9 @@ import org.example.carebridge.domain.user.repository.DoctorPortfolioRepository;
 import org.example.carebridge.domain.user.repository.UserProfileImageRepository;
 import org.example.carebridge.domain.user.repository.UserRepository;
 import org.example.carebridge.global.entity.RefreshToken;
+import org.example.carebridge.global.exception.BadValueException;
+import org.example.carebridge.global.exception.CustomException;
+import org.example.carebridge.global.exception.ExceptionType;
 import org.example.carebridge.global.repository.RefreshTokenRepository;
 import org.example.carebridge.global.service.TokenService;
 import org.example.carebridge.global.util.JwtUtil;
@@ -185,6 +188,18 @@ public class UserService {
         doctorPortfolioRepository.save(doctorPortfolioImage);
         user.updateImage(doctorPortfolioImage.getUrl());
         return doctorPortfolioImage.getUrl();
+    }
+
+    //회원 탈퇴
+    @Transactional
+    public void deleteUser(User user, String password) {
+        //비밀번호 교차 검증 로직
+       if(!passwordEncoder.matches(password, user.getPassword())) {
+           throw new BadValueException(ExceptionType.WRONG_PASSWORD);
+       }
+
+       user.updateStatus(UserStatus.DELETE);
+       userRepository.save(user);
     }
 
     private User buildUser(UserSignupRequestDto userSignupRequestDto) {
